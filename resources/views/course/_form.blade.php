@@ -1,45 +1,29 @@
-@if($errors->any())
-    <div>
-        <h3>Please fix the following errors:</h3>
-        <ul>
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+@php
+    $course = $course ?? new \App\Models\Course(['is_active' => true]);
+@endphp
 
-<div>
-    <label for="name">Name</label>
-    <input type="text" id="name" name="name" value="{{ old('name', $course->name ?? '') }}">
-</div><br>
+<x-form-input name="name" label="Name" :value="$course->name" />
+<x-form-textarea name="description" label="Description" :value="$course->description" />
+<x-form-input name="duration" label="Duration (weeks)" type="number" min="1" :value="$course->duration" />
+<x-form-input name="fee" label="Fee" type="number" step="0.01" min="0" :value="$course->fee" />
 
-<div>
-    <label for="description">Description</label>
-    <textarea id="description" name="description">{{ old('description', $course->description ?? '') }}</textarea>
-</div><br>
-
-<div>
-    <label for="duration">Duration (weeks)</label>
-    <input type="number" id="duration" name="duration" value="{{ old('duration', $course->duration ?? '') }}">
-</div><br>
-
-<div>
-    <label for="fee">Fee</label>
-    <input type="number" step="0.01" id="fee" name="fee" value="{{ old('fee', $course->fee ?? '') }}">
-</div><br>
-
-<div>
+<div class="form-group">
     <label for="difficulty">Difficulty</label>
     <select id="difficulty" name="difficulty">
         @foreach(['Easy', 'Medium', 'Hard'] as $level)
-            <option value="{{ $level }}" @selected(old('difficulty', $course->difficulty ?? '') === $level)>{{ $level }}</option>
+            <option value="{{ $level }}" @selected(old('difficulty', $course->difficulty) === $level)>
+                {{ $level }}
+            </option>
         @endforeach
     </select>
-</div><br>
+    @error('difficulty')
+        <p class="error">{{ $message }}</p>
+    @enderror
+</div>
 
-<div>
-    <label for="is_active">Active</label>
+<div class="form-group checkbox">
     <input type="hidden" name="is_active" value="0">
-    <input type="checkbox" id="is_active" name="is_active" value="1" @checked(old('is_active', $course->is_active ?? true))>
-</div><br>
+    <input type="checkbox" id="is_active" name="is_active" value="1"
+           @checked(old('is_active', $course->is_active))>
+    <label for="is_active">Active</label>
+</div>
